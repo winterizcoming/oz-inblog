@@ -7,7 +7,7 @@
 아래 문장을 Codex에 그대로 전달하세요.
 
 ```text
-GitHub의 https://github.com/winterizcoming/oz-inblog/tree/v1.0.0-alpha.1 에 있는 INSTALL.md와 release-manifest.json을 읽고 oz-inblog v1.0a를 설치해줘. release checksum을 검증하고 기존 데이터는 보존하며, Codex 로그인·도구 버전 변경·기존 설치 덮어쓰기가 필요할 때만 나에게 확인한 뒤 doctor, test, smoke를 통과시키고 로컬 서비스를 시작해 접속 주소와 데이터 위치를 알려줘.
+GitHub의 https://github.com/winterizcoming/oz-inblog/tree/v1.0.0-alpha.2 에 있는 INSTALL.md와 release-manifest.json을 읽고 oz-inblog v1.0a를 설치해줘. release checksum을 검증하고 기존 데이터는 보존하며, Codex 로그인·도구 버전 변경·기존 설치 덮어쓰기가 필요할 때만 나에게 확인한 뒤 doctor, test, smoke를 통과시키고 로컬 서비스를 시작해 접속 주소와 데이터 위치를 알려줘.
 ```
 
 지원 환경과 설치 절차는 [INSTALL.md](INSTALL.md)를 확인하세요.

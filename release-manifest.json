@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "oz-inblog",
   "displayVersion": "v1.0a",
-  "packageVersion": "1.0.0-alpha.1",
-  "gitTag": "v1.0.0-alpha.1",
+  "packageVersion": "1.0.0-alpha.2",
+  "gitTag": "v1.0.0-alpha.2",
   "runtimeProfile": "v1.0a",
   "platform": {
     "os": "darwin",

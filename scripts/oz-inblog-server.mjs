@@ -124,13 +124,13 @@ function sessionSummary(entry) {
   };
 }
 
-async function defaultCodexStatus() {
+export async function defaultCodexStatus({ runCommand = execFileAsync } = {}) {
   try {
-    const [{ stdout: doctor }, { stdout: login }] = await Promise.all([
-      execFileAsync("codex", ["doctor", "--json"], { timeout: 20_000 }),
-      execFileAsync("codex", ["login", "status"], { timeout: 20_000 })
+    const [{ stdout: doctor }, { stdout: login, stderr: loginError }] = await Promise.all([
+      runCommand("codex", ["doctor", "--json"], { timeout: 20_000 }),
+      runCommand("codex", ["login", "status"], { timeout: 20_000 })
     ]);
-    return { ready: /logged in/i.test(login), doctor: JSON.parse(doctor) };
+    return { ready: /logged in/i.test(`${login ?? ""}\n${loginError ?? ""}`), doctor: JSON.parse(doctor) };
   } catch (error) {
     return { ready: false, code: error?.code ?? "codex_unavailable" };
   }

@@ -42,7 +42,14 @@ export async function runDoctor({ env = process.env } = {}) {
     node: { ok: process.version === `v${manifest.tools.node}`, actual: process.version.slice(1), expected: manifest.tools.node },
     npm: { ok: npm.ok && npm.value === manifest.tools.npm, actual: npm.value, expected: manifest.tools.npm },
     codex: { ok: codex.ok && codex.value.includes(manifest.tools.codex), actual: codex.value, expected: manifest.tools.codex },
-    codexDoctor: { ok: doctorReport !== null && doctorCriticalChecks.every((id) => doctorReport.checks?.[id]?.status === "ok"), actual: doctorReport?.overallStatus ?? codexDoctor.code },
+    codexDoctor: {
+      ok: doctorReport !== null && doctorCriticalChecks.every((id) => doctorReport.checks?.[id]?.status === "ok"),
+      actual: doctorReport === null
+        ? codexDoctor.code
+        : doctorCriticalChecks.every((id) => doctorReport.checks?.[id]?.status === "ok")
+          ? "critical checks ok"
+          : doctorReport.overallStatus
+    },
     codexLogin: { ok: /logged in/iu.test(login.value ?? ""), actual: login.value || login.code },
     dataDirectory: { ok: fs.existsSync(data.root) && (fs.statSync(data.root).mode & 0o777) === 0o700, actual: data.root },
     writingSkills: { ok: ["korean-humanizer", "waza"].every((id) => installedSkills.includes(id)), actual: installedSkills }

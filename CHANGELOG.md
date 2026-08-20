@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-alpha.2 - 2026-08-20
+
+- Fixed fresh-install checksum verification by publishing a portable basename-only checksum file.
+- Fixed readiness detection when `codex login status` reports the login state on stderr.
+- Clarified doctor output so critical-check success is not displayed as an overall Codex warning.
+
 ## 1.0.0-alpha.1 - 2026-08-20
 
 - Promoted Curated Discovery to the single v1.0a runtime profile.

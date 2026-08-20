@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 import { loadReleaseManifest, releaseMetadata } from "../lib/oz-inblog-release.mjs";
 import { createSecureDataDirectories, resolveOzDataPaths } from "../lib/oz-inblog-data.mjs";
-import { createOzInblogServer } from "./oz-inblog-server.mjs";
+import { createOzInblogServer, defaultCodexStatus } from "./oz-inblog-server.mjs";
 import { BrunchDebugTraceRecorder } from "../lib/oz-brunch-debug-trace.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -22,8 +22,8 @@ test("release metadata keeps display, package, and tag versions aligned", () => 
   // Then
   assert.deepEqual(metadata, {
     displayVersion: "v1.0a",
-    packageVersion: "1.0.0-alpha.1",
-    tag: "v1.0.0-alpha.1",
+    packageVersion: "1.0.0-alpha.2",
+    tag: "v1.0.0-alpha.2",
     buildSha: "abc123"
   });
 });
@@ -75,7 +75,7 @@ test("Brunch-only server exposes release metadata and readiness", async (t) => {
   assert.equal(health.ok, true);
   assert.equal(ready.ready, true);
   assert.equal(meta.displayVersion, "v1.0a");
-  assert.equal(meta.packageVersion, "1.0.0-alpha.1");
+  assert.equal(meta.packageVersion, "1.0.0-alpha.2");
 });
 
 test("public chat API rejects a caller-supplied runtime profile", async (t) => {
@@ -108,4 +108,17 @@ test("debug traces honor the external data directory", () => {
 
   // Then
   assert.equal(recorder.baseDirectory, path.join(debugRoot, "session-a"));
+});
+
+test("readiness accepts Codex login reported on stderr", async () => {
+  const status = await defaultCodexStatus({
+    runCommand: async (command, args) => {
+      assert.equal(command, "codex");
+      if (args[0] === "doctor") return { stdout: JSON.stringify({ overallStatus: "ok" }), stderr: "" };
+      return { stdout: "", stderr: "Logged in using ChatGPT\n" };
+    }
+  });
+
+  assert.equal(status.ready, true);
+  assert.equal(status.doctor.overallStatus, "ok");
 });
