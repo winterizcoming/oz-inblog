@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "oz-inblog",
+  "displayVersion": "v1.0a",
+  "packageVersion": "1.0.0-alpha.1",
+  "gitTag": "v1.0.0-alpha.1",
+  "runtimeProfile": "v1.0a",
+  "platform": {
+    "os": "darwin",
+    "architecture": "arm64"
+  },
+  "tools": {
+    "node": "24.19.0",
+    "npm": "11.17.0",
+    "codex": "0.144.1"
+  },
+  "externalSkills": [
+    {
+      "id": "korean-humanizer",
+      "repository": "https://github.com/dotoricode/korean-humanizer",
+      "version": "7dff5b48cc06fc4252d4766b802ecd61e62c50ad",
+      "license": "MIT"
+    },
+    {
+      "id": "waza",
+      "repository": "https://github.com/tw93/Waza",
+      "version": "v3.34.0",
+      "license": "MIT"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OZ 디부캠 인블로그 UI</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <img class="brand-mark" src="/assets/ozinblog_logo.svg" alt="ozinblog" />
+          <div class="brand-version">v1.0a</div>
+          <button class="workflow-toggle" id="workflowToggle" type="button" aria-label="워크플로우 열기"><span></span><span></span><span></span></button>
+        </div>
+        <nav class="top-actions" aria-label="상단 메뉴">
+          <span class="save-status" aria-live="polite"><span class="icon-check" aria-hidden="true"></span><span class="save-status-copy">저장됨 <time class="save-status-time" datetime=""></time></span></span>
+          <div class="provider-status-wrap">
+            <button class="provider-pill disconnected" id="providerStatus" type="button">
+              <span class="provider-dot"></span>
+              <span>Codex 연결 끊김</span>
+            </button>
+            <div class="provider-popover" id="providerPopover" hidden>
+              <div class="provider-popover-head">
+                <strong>Codex Provider</strong>
+                <span id="providerStateText">연결 끊김</span>
+              </div>
+              <p id="providerMessage">현재 Codex CLI 연결 상태를 확인할 수 있습니다.</p>
+              <div class="provider-button-row">
+                <button class="provider-connect-button" id="connectCodex" type="button">연결하기</button>
+                <button class="provider-disconnect-button" id="disconnectCodex" type="button" hidden>연결 해제</button>
+              </div>
+            </div>
+          </div>
+          <button class="ghost-button" type="button" aria-label="가이드"><img class="top-action-icon icon-book" src="/assets/BookOpenText.svg" alt="" /><span class="ghost-button-label">가이드</span></button>
+          <button class="ghost-button" id="openV06Debug" type="button" hidden>Debug JSON 보기</button>
+          <button class="ghost-button" id="openArticles" type="button" aria-label="목록"><img class="top-action-icon icon-list" src="/assets/List.svg" alt="" /><span class="ghost-button-label">목록</span></button>
+        </nav>
+      </header>
+      <main class="workspace">
+        <aside class="left-rail" aria-label="WorkflowRail"></aside>
+        <section class="conversation-panel" aria-label="Conversation"></section>
+        <div class="panel-resizer" id="panelResizer" role="separator" aria-label="패널 너비 조절" aria-orientation="vertical"></div>
+        <section class="right-panel" aria-label="Topic Refinement"></section>
+      </main>
+      <footer class="footer">
+        <img src="/assets/nextrunners-logo.png" alt="" />
+        <span>© 2026 오즈코딩스쿨 Operated by 넥스트러너스</span>
+        <span>관련 문의는 교육5팀으로 연락 바랍니다.</span>
+      </footer>
+    </div>
+
+    <div class="drawer-backdrop" hidden></div>
+    <aside class="drawer" id="articleDrawer" aria-label="작업물 목록" hidden>
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Workflows</p>
+          <h2>작업물 목록</h2>
+        </div>
+        <button class="icon-button close-drawer" type="button" aria-label="닫기">×</button>
+      </div>
+      <div class="drawer-controls work-controls">
+        <p>디스크에 저장된 Workflow Session을 불러오거나 새 작업을 시작합니다. 손상·레거시 세션도 기록 열람이 가능합니다.</p>
+        <button class="new-workflow-button" id="createWorkflow" type="button">+ 새 작업물 생성</button>
+        <label class="session-filter" for="sessionFilter">목록 필터
+          <select id="sessionFilter">
+            <option value="all">전체</option>
+            <option value="live">라이브</option>
+            <option value="incomplete">미완료</option>
+            <option value="complete">완료</option>
+            <option value="recoverable">복원 가능</option>
+            <option value="legacy">레거시</option>
+            <option value="tests">테스트·fixture 포함</option>
+          </select>
+        </label>
+      </div>
+      <div class="article-list"></div>
+    </aside>
+
+    <aside class="drawer debug-drawer" id="debugDrawer" aria-label="Debug JSON" hidden>
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Raw Response</p>
+          <h2>Debug JSON 보기</h2>
+        </div>
+        <button class="icon-button close-drawer" type="button" aria-label="닫기">×</button>
+      </div>
+      <pre class="debug-json"></pre>
+    </aside>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

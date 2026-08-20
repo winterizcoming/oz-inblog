@@ -1,0 +1,26 @@
+name: release-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.19.0
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run check:ui
+      - run: npm run smoke
+      - run: npm run verify:package
+      - name: Secret and private artifact scan
+        run: npm run verify:package

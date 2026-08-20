@@ -1,0 +1,16 @@
+.DS_Store
+**/.DS_Store
+node_modules/
+.omo/
+.playwright-cli/
+test-results/
+*.bak*
+.env
+.env.*
+!.env.example
+.tmp/
+.codex/
+.debug-journal.md
+dist/
+output/
+work/

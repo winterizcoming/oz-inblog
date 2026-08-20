@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oz-inblog.local/schema/brunch-writing-readiness.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "dimensions": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "central_judgment",
+              "title_contract",
+              "structure_conclusion",
+              "evidence_boundaries",
+              "voice_readability"
+            ]
+          },
+          "score": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "reason": { "type": "string", "minLength": 1 }
+        },
+        "required": ["id", "score", "reason"]
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "TITLE_CONTRACT_MISMATCH",
+              "CENTRAL_JUDGMENT_MISSING",
+              "CONCLUSION_MISSING",
+              "UNVERIFIED_NUMERIC_CLAIM",
+              "UNSUPPORTED_CLAIM",
+              "SOURCE_CLAIM_MISMATCH",
+              "EXCESSIVE_REPETITION",
+              "SOURCE_ATTRIBUTION_INCOMPLETE",
+              "COPYEDITING_REQUIRED"
+            ]
+          },
+          "message": { "type": "string", "minLength": 1 },
+          "action": { "type": "string", "minLength": 1 }
+        },
+        "required": ["code", "message", "action"]
+      }
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": ["not_required", "supported", "needs_verification"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "summary": { "type": "string", "minLength": 1 }
+  },
+  "required": ["dimensions", "blockers", "evidence_status", "confidence", "summary"]
+}

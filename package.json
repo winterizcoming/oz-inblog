@@ -1,0 +1,24 @@
+{
+  "name": "oz-inblog",
+  "version": "1.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.19.0",
+    "npm": "11.17.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env scripts/oz-inblog-server.mjs",
+    "doctor": "node scripts/oz-inblog-doctor.mjs",
+    "smoke": "node scripts/oz-inblog-smoke.mjs",
+    "install:skills": "node scripts/oz-inblog-skills.mjs install",
+    "verify:skills": "node scripts/oz-inblog-skills.mjs verify",
+    "verify:package": "node scripts/oz-inblog-verify-package.mjs",
+    "brunch:debug": "node scripts/oz-brunch-debug.mjs",
+    "check:ui": "node scripts/oz-inblog-check-ui.mjs",
+    "test": "node --test scripts/brunch-archive.test.mjs scripts/codex-app-server-client.test.mjs scripts/oz-inblog-release.test.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1"
+  }
+}
