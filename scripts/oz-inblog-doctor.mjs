@@ -23,6 +23,40 @@ async function commandVersion(command, args) {
   }
 }
 
+function parseVersion(value) {
+  const match = String(value ?? "").match(/(\d+)\.(\d+)\.(\d+)/u);
+  return match ? match.slice(1).map(Number) : null;
+}
+
+function parseConstraintVersion(value) {
+  const match = String(value ?? "").match(/^(\d+)(?:\.(\d+))?(?:\.(\d+))?$/u);
+  return match ? [Number(match[1]), Number(match[2] ?? 0), Number(match[3] ?? 0)] : null;
+}
+
+function compareVersions(left, right) {
+  for (let index = 0; index < 3; index += 1) {
+    if (left[index] !== right[index]) return left[index] > right[index] ? 1 : -1;
+  }
+  return 0;
+}
+
+export function isVersionCompatible(actual, range) {
+  const version = parseVersion(actual);
+  if (!version || typeof range !== "string") return false;
+  return range.trim().split(/\s+/u).filter(Boolean).every((constraint) => {
+    const match = constraint.match(/^(>=|<=|>|<|=)?(\d+(?:\.\d+){0,2})$/u);
+    if (!match) return false;
+    const comparison = compareVersions(version, parseConstraintVersion(match[2]));
+    switch (match[1] ?? "=") {
+      case ">=": return comparison >= 0;
+      case "<=": return comparison <= 0;
+      case ">": return comparison > 0;
+      case "<": return comparison < 0;
+      default: return comparison === 0;
+    }
+  });
+}
+
 export async function runDoctor({ env = process.env } = {}) {
   const manifest = loadReleaseManifest(root);
   const data = createSecureDataDirectories(resolveOzDataPaths({ env }));
@@ -36,12 +70,17 @@ export async function runDoctor({ env = process.env } = {}) {
   let doctorReport = null;
   try { doctorReport = JSON.parse(codexDoctor.value); } catch { doctorReport = null; }
   const doctorCriticalChecks = ["auth.credentials", "config.load", "installation", "network.provider_reachability", "network.websocket_reachability"];
+  const toolRanges = manifest.compatibility?.tools ?? {
+    node: `=${manifest.tools.node}`,
+    npm: `=${manifest.tools.npm}`,
+    codex: `=${manifest.tools.codex}`
+  };
   const checks = {
     platform: { ok: process.platform === manifest.platform.os, actual: process.platform, expected: manifest.platform.os },
     architecture: { ok: process.arch === manifest.platform.architecture, actual: process.arch, expected: manifest.platform.architecture },
-    node: { ok: process.version === `v${manifest.tools.node}`, actual: process.version.slice(1), expected: manifest.tools.node },
-    npm: { ok: npm.ok && npm.value === manifest.tools.npm, actual: npm.value, expected: manifest.tools.npm },
-    codex: { ok: codex.ok && codex.value.includes(manifest.tools.codex), actual: codex.value, expected: manifest.tools.codex },
+    node: { ok: isVersionCompatible(process.version, toolRanges.node), actual: process.version.slice(1), expected: toolRanges.node },
+    npm: { ok: npm.ok && isVersionCompatible(npm.value, toolRanges.npm), actual: npm.value, expected: toolRanges.npm },
+    codex: { ok: codex.ok && isVersionCompatible(codex.value, toolRanges.codex), actual: codex.value, expected: toolRanges.codex },
     codexDoctor: {
       ok: doctorReport !== null && doctorCriticalChecks.every((id) => doctorReport.checks?.[id]?.status === "ok"),
       actual: doctorReport === null
@@ -57,11 +96,13 @@ export async function runDoctor({ env = process.env } = {}) {
   return { ok: Object.values(checks).every((check) => check.ok), version: manifest.displayVersion, dataDirectory: data.root, checks };
 }
 
-const result = await runDoctor();
-if (process.argv.includes("--json")) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-else {
-  process.stdout.write(`oz-inblog ${result.version} doctor\n`);
-  for (const [name, check] of Object.entries(result.checks)) process.stdout.write(`${check.ok ? "PASS" : "FAIL"} ${name}: ${Array.isArray(check.actual) ? check.actual.join(", ") : check.actual}\n`);
-  process.stdout.write(`Data: ${result.dataDirectory}\n`);
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const result = await runDoctor();
+  if (process.argv.includes("--json")) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+  else {
+    process.stdout.write(`oz-inblog ${result.version} doctor\n`);
+    for (const [name, check] of Object.entries(result.checks)) process.stdout.write(`${check.ok ? "PASS" : "FAIL"} ${name}: ${Array.isArray(check.actual) ? check.actual.join(", ") : check.actual}\n`);
+    process.stdout.write(`Data: ${result.dataDirectory}\n`);
+  }
+  if (!result.ok) process.exitCode = 1;
 }
-if (!result.ok) process.exitCode = 1;

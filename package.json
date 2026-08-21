@@ -1,11 +1,11 @@
 {
   "name": "oz-inblog",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "private": true,
   "type": "module",
   "engines": {
-    "node": "24.19.0",
-    "npm": "11.17.0"
+    "node": ">=24.19.0 <26",
+    "npm": ">=11.10.0 <12"
   },
   "scripts": {
     "start": "node --env-file-if-exists=.env scripts/oz-inblog-server.mjs",

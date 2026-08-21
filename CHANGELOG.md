@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-alpha.3 - 2026-08-21
+
+- Relaxed exact tool-version blocking to compatible ranges with live doctor, test, and smoke verification.
+- Kept tested tool versions as reproducible baselines in the release manifest.
+- Separated a missing Codex executable or login from ordinary version compatibility checks.
+
 ## 1.0.0-alpha.2 - 2026-08-20
 
 - Fixed fresh-install checksum verification by publishing a portable basename-only checksum file.

@@ -1,20 +1,20 @@
 # oz-inblog v1.0a 설치
 
-## 공식 지원 환경
+## 공식 검증 기준과 허용 범위
 
 - macOS arm64
-- Node.js 24.19.0
-- npm 11.17.0
-- Codex CLI 0.144.1
+- Node.js: `>=24.19.0 <26` (검증 기준 `24.19.0`)
+- npm: `>=11.10.0 <12` (검증 기준 `11.17.0`)
+- Codex CLI: `>=0.144.1` (검증 기준 `0.144.1`)
 
-설치 도우미는 먼저 운영체제와 도구 버전을 확인해야 합니다. Codex 로그인, 도구 버전 변경, 기존 설치 교체가 필요할 때만 사용자에게 확인합니다. 인증 파일, 쿠키, 토큰은 읽거나 복사하지 않습니다.
+검증 기준 버전은 재현 가능한 기준값이며, 허용 범위 안의 더 새로운 버전은 실제 `doctor`, `test`, `smoke` 검증을 통과하면 그대로 사용합니다. 허용 범위를 벗어난 경우에만 사용자에게 확인합니다. Codex 실행 파일이 없거나 로그인되지 않은 경우는 버전 문제가 아니므로 별도 필수 조건으로 안내하고 중단합니다. 인증 파일, 쿠키, 토큰은 읽거나 복사하지 않습니다.
 
 ## 설치 위치
 
 ```text
 ~/Library/Application Support/oz-inblog/
-├─ releases/1.0.0-alpha.2/
-├─ current -> releases/1.0.0-alpha.2/
+├─ releases/1.0.0-alpha.3/
+├─ current -> releases/1.0.0-alpha.3/
 ├─ data/
 ├─ config/
 └─ backups/
@@ -24,10 +24,10 @@
 
 ## 설치 절차
 
-1. `uname -s`, `uname -m`, `node --version`, `npm --version`, `codex --version`을 확인합니다.
-2. `codex doctor --json`과 `codex login status`를 실행합니다. 로그인이 없으면 사용자에게 `codex login`을 요청합니다.
+1. `uname -s`, `uname -m`, `node --version`, `npm --version`, `codex --version`을 확인합니다. 허용 범위 안이면 정확한 검증 기준 버전과 달라도 계속 진행합니다.
+2. `codex` 실행 파일이 있을 때만 `codex doctor --json`과 `codex login status`를 실행합니다. 실행 파일이 없으면 Codex CLI/App Server 연결을 먼저 준비해야 한다고 안내하고 중단합니다. 로그인이 없으면 사용자에게 `codex login`을 요청합니다.
 3. 기존 `current`, `data`, Writing Skill 버전을 확인합니다. 다른 버전이 있으면 덮어쓰기 전에 확인합니다.
-4. GitHub Release `v1.0.0-alpha.2`의 `oz-inblog-1.0.0-alpha.2.tar.gz`와 `.sha256`을 같은 임시 폴더에 다운로드합니다.
+4. GitHub Release `v1.0.0-alpha.3`의 `oz-inblog-1.0.0-alpha.3.tar.gz`와 `.sha256`을 같은 임시 폴더에 다운로드합니다.
 5. 다운로드한 폴더에서 `.sha256`을 확인하고 tarball의 파일명만 대상으로 SHA-256을 검증합니다. 제작자 컴퓨터의 절대 경로를 사용하지 않습니다.
 6. release 폴더에서 `npm ci`를 실행합니다.
 7. `npm run install:skills`와 `npm run verify:skills`를 실행합니다.

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { loadReleaseManifest, releaseMetadata } from "../lib/oz-inblog-release.mjs";
 import { createSecureDataDirectories, resolveOzDataPaths } from "../lib/oz-inblog-data.mjs";
 import { createOzInblogServer, defaultCodexStatus } from "./oz-inblog-server.mjs";
+import { isVersionCompatible } from "./oz-inblog-doctor.mjs";
 import { BrunchDebugTraceRecorder } from "../lib/oz-brunch-debug-trace.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -22,8 +23,8 @@ test("release metadata keeps display, package, and tag versions aligned", () => 
   // Then
   assert.deepEqual(metadata, {
     displayVersion: "v1.0a",
-    packageVersion: "1.0.0-alpha.2",
-    tag: "v1.0.0-alpha.2",
+    packageVersion: "1.0.0-alpha.3",
+    tag: "v1.0.0-alpha.3",
     buildSha: "abc123"
   });
 });
@@ -75,7 +76,7 @@ test("Brunch-only server exposes release metadata and readiness", async (t) => {
   assert.equal(health.ok, true);
   assert.equal(ready.ready, true);
   assert.equal(meta.displayVersion, "v1.0a");
-  assert.equal(meta.packageVersion, "1.0.0-alpha.2");
+  assert.equal(meta.packageVersion, "1.0.0-alpha.3");
 });
 
 test("public chat API rejects a caller-supplied runtime profile", async (t) => {
@@ -121,4 +122,11 @@ test("readiness accepts Codex login reported on stderr", async () => {
 
   assert.equal(status.ready, true);
   assert.equal(status.doctor.overallStatus, "ok");
+});
+
+test("doctor accepts newer compatible tool versions without requiring an exact match", () => {
+  assert.equal(isVersionCompatible("25.7.0", ">=24.19.0 <26"), true);
+  assert.equal(isVersionCompatible("11.10.1", ">=11.10.0 <12"), true);
+  assert.equal(isVersionCompatible("codex-cli 0.147.0-alpha.6.5", ">=0.144.1"), true);
+  assert.equal(isVersionCompatible("23.11.0", ">=24.19.0 <26"), false);
 });
