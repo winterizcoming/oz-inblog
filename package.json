@@ -1,6 +1,6 @@
 {
   "name": "oz-inblog",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "private": true,
   "type": "module",
   "engines": {
@@ -16,7 +16,7 @@
     "verify:package": "node scripts/oz-inblog-verify-package.mjs",
     "brunch:debug": "node scripts/oz-brunch-debug.mjs",
     "check:ui": "node scripts/oz-inblog-check-ui.mjs",
-    "test": "node --test scripts/brunch-archive.test.mjs scripts/codex-app-server-client.test.mjs scripts/oz-inblog-release.test.mjs"
+    "test": "node --test scripts/brunch-archive.test.mjs scripts/codex-app-server-client.test.mjs scripts/oz-inblog-launcher.test.mjs scripts/oz-inblog-release.test.mjs"
   },
   "dependencies": {
     "ajv": "^8.17.1"

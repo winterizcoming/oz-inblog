@@ -23,8 +23,8 @@ test("release metadata keeps display, package, and tag versions aligned", () => 
   // Then
   assert.deepEqual(metadata, {
     displayVersion: "v1.0a",
-    packageVersion: "1.0.0-alpha.4",
-    tag: "v1.0.0-alpha.4",
+    packageVersion: "1.0.0-alpha.5",
+    tag: "v1.0.0-alpha.5",
     buildSha: "abc123"
   });
 });
@@ -76,7 +76,7 @@ test("Brunch-only server exposes release metadata and readiness", async (t) => {
   assert.equal(health.ok, true);
   assert.equal(ready.ready, true);
   assert.equal(meta.displayVersion, "v1.0a");
-  assert.equal(meta.packageVersion, "1.0.0-alpha.4");
+  assert.equal(meta.packageVersion, "1.0.0-alpha.5");
 });
 
 test("public chat API rejects a caller-supplied runtime profile", async (t) => {
