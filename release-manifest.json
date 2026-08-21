@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "oz-inblog",
   "displayVersion": "v1.0a",
-  "packageVersion": "1.0.0-alpha.3",
-  "gitTag": "v1.0.0-alpha.3",
+  "packageVersion": "1.0.0-alpha.4",
+  "gitTag": "v1.0.0-alpha.4",
   "runtimeProfile": "v1.0a",
   "platform": {
     "os": "darwin",
@@ -19,6 +19,13 @@
       "node": ">=24.19.0 <26",
       "npm": ">=11.10.0 <12",
       "codex": ">=0.144.1"
+    }
+  },
+  "bootstrap": {
+    "codex": {
+      "package": "@openai/codex",
+      "version": "latest",
+      "update": "automatic"
     }
   },
   "externalSkills": [

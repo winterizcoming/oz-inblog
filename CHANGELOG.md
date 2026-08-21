@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0-alpha.4 - 2026-08-21
+
+- Automatically updates a missing or outdated Codex CLI to the latest stable package during installation.
+- Keeps user confirmation for login, global install permission failures, and existing installation replacement.
+
 ## 1.0.0-alpha.3 - 2026-08-21
 
 - Relaxed exact tool-version blocking to compatible ranges with live doctor, test, and smoke verification.

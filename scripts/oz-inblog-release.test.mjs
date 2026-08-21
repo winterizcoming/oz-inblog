@@ -23,8 +23,8 @@ test("release metadata keeps display, package, and tag versions aligned", () => 
   // Then
   assert.deepEqual(metadata, {
     displayVersion: "v1.0a",
-    packageVersion: "1.0.0-alpha.3",
-    tag: "v1.0.0-alpha.3",
+    packageVersion: "1.0.0-alpha.4",
+    tag: "v1.0.0-alpha.4",
     buildSha: "abc123"
   });
 });
@@ -76,7 +76,7 @@ test("Brunch-only server exposes release metadata and readiness", async (t) => {
   assert.equal(health.ok, true);
   assert.equal(ready.ready, true);
   assert.equal(meta.displayVersion, "v1.0a");
-  assert.equal(meta.packageVersion, "1.0.0-alpha.3");
+  assert.equal(meta.packageVersion, "1.0.0-alpha.4");
 });
 
 test("public chat API rejects a caller-supplied runtime profile", async (t) => {
@@ -129,4 +129,13 @@ test("doctor accepts newer compatible tool versions without requiring an exact m
   assert.equal(isVersionCompatible("11.10.1", ">=11.10.0 <12"), true);
   assert.equal(isVersionCompatible("codex-cli 0.147.0-alpha.6.5", ">=0.144.1"), true);
   assert.equal(isVersionCompatible("23.11.0", ">=24.19.0 <26"), false);
+});
+
+test("install instructions repair a missing or outdated Codex CLI automatically", () => {
+  const install = fs.readFileSync(path.join(root, "INSTALL.md"), "utf8");
+  const readme = fs.readFileSync(path.join(root, "README.md"), "utf8");
+
+  assert.match(install, /npm install -g @openai\/codex@latest/u);
+  assert.match(install, /Codex CLI가 없거나 최소 버전보다 낮으면.*최신 안정 버전으로 업데이트/u);
+  assert.match(readme, /Codex CLI가 없거나 최소 버전보다 낮으면.*자동 업데이트/u);
 });
