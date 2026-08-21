@@ -13,8 +13,8 @@
 
 ```text
 ~/Library/Application Support/oz-inblog/
-├─ releases/1.0.0-alpha.5/
-├─ current -> releases/1.0.0-alpha.5/
+├─ releases/1.0.0-alpha.6/
+├─ current -> releases/1.0.0-alpha.6/
 ├─ data/
 ├─ config/
 └─ backups/
@@ -34,7 +34,7 @@
    설치 후 `codex --version`을 다시 확인합니다. 전역 설치 권한 오류 등으로 업데이트가 실패하면 자동으로 우회하지 않고 해당 오류와 위 명령을 알립니다.
 3. `codex doctor --json`과 `codex login status`를 실행합니다. 로그인이 없으면 사용자에게 `codex login`을 요청합니다.
 4. 기존 `current`, `data`, Writing Skill 버전을 확인합니다. 다른 버전이 있으면 덮어쓰기 전에 확인합니다.
-5. GitHub Release `v1.0.0-alpha.5`의 `oz-inblog-1.0.0-alpha.5.tar.gz`와 `.sha256`을 같은 임시 폴더에 다운로드합니다.
+5. GitHub Release `v1.0.0-alpha.6`의 `oz-inblog-1.0.0-alpha.6.tar.gz`와 `.sha256`을 같은 임시 폴더에 다운로드합니다.
 6. 다운로드한 폴더에서 `.sha256`을 확인하고 tarball의 파일명만 대상으로 SHA-256을 검증합니다. 제작자 컴퓨터의 절대 경로를 사용하지 않습니다.
 7. release 폴더에서 `npm ci`를 실행합니다.
 8. `npm run install:skills`와 `npm run verify:skills`를 실행합니다.

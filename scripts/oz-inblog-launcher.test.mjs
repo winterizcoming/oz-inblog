@@ -9,10 +9,10 @@ import { isNewerVersion, versionParts } from "./oz-inblog-launcher.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("launcher compares release versions without opening the app", () => {
-  assert.deepEqual(versionParts("v1.0.0-alpha.5"), [1, 0, 0, 0, 5]);
-  assert.equal(isNewerVersion("1.0.0-alpha.6", "1.0.0-alpha.5"), true);
-  assert.equal(isNewerVersion("1.0.0-alpha.5", "1.0.0-alpha.5"), false);
-  assert.equal(isNewerVersion("1.0.0-alpha.4", "1.0.0-alpha.5"), false);
+  assert.deepEqual(versionParts("v1.0.0-alpha.6"), [1, 0, 0, 0, 6]);
+  assert.equal(isNewerVersion("1.0.0-alpha.7", "1.0.0-alpha.6"), true);
+  assert.equal(isNewerVersion("1.0.0-alpha.6", "1.0.0-alpha.6"), false);
+  assert.equal(isNewerVersion("1.0.0-alpha.5", "1.0.0-alpha.6"), false);
 });
 
 test("macOS launcher bundle keeps the release entrypoint and supplied icon", () => {

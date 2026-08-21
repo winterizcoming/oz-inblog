@@ -12,11 +12,13 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), 
 const indexHtml = fs.readFileSync(path.join(root, "ui", "v0-3", "index.html"), "utf8");
 const forbiddenTopLevel = [".codex", ".env", ".tmp", "markdown_sources", "output", "research_runs", "work"];
 const forbiddenRuntime = ["v08-writer", "v08-research", "v08-editorial", "knowledge-supabase", "v06-operator", "workflow-runtime"];
+const allowedLargeFiles = new Set(["ui/v0-3/assets/oz-inblog-guide.pdf"]);
 const violations = [];
 
 if (packageJson.name !== manifest.name) violations.push("package name does not match release manifest");
 if (packageJson.version !== manifest.packageVersion) violations.push("package version does not match release manifest");
 if (!indexHtml.includes(manifest.displayVersion)) violations.push("UI version does not match release manifest");
+if (!fs.existsSync(path.join(root, "ui", "v0-3", "assets", "oz-inblog-guide.pdf"))) violations.push("guide PDF is missing");
 for (const name of forbiddenTopLevel) if (fs.existsSync(path.join(root, name))) violations.push(`forbidden path included: ${name}`);
 
 function inspect(directory) {
@@ -25,7 +27,7 @@ function inspect(directory) {
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory()) { inspect(fullPath); continue; }
     const relative = path.relative(root, fullPath);
-    if (fs.statSync(fullPath).size > 5 * 1024 * 1024) violations.push(`unexpected large file: ${relative}`);
+    if (fs.statSync(fullPath).size > 5 * 1024 * 1024 && !allowedLargeFiles.has(relative)) violations.push(`unexpected large file: ${relative}`);
     if (!/\.(?:c?js|mjs|json|md|html|css|txt|yml|yaml|svg)$/iu.test(entry.name)) continue;
     const content = fs.readFileSync(fullPath, "utf8");
     if (/\/Users\/[A-Za-z0-9._-]+\//u.test(content)) violations.push(`absolute user path: ${relative}`);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-alpha.6 - 2026-08-21
+
+- Added the in-app Guide link, which opens the bundled oz-inblog guide PDF in a new tab.
+
 ## 1.0.0-alpha.5 - 2026-08-21
 
 - Added the macOS `oz-inblog.app` launcher with the supplied icon.
