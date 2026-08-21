@@ -22,17 +22,26 @@ function currentManifest() {
   try { return readJson(path.join(root, "release-manifest.json")); } catch { return { packageVersion: "0.0.0", displayVersion: "unknown" }; }
 }
 
+const VERSION_PATTERN = /^v?(\d+)\.(\d+)\.(\d+)(?:-([a-z]+)\.(\d+))?$/iu;
+
 function versionParts(value) {
-  return String(value ?? "0").replace(/^v/u, "").split(/[.-]/u).map((part) => Number.parseInt(part, 10) || 0);
+  const match = String(value ?? "0").trim().match(VERSION_PATTERN);
+  if (!match) return String(value ?? "0").replace(/^v/u, "").split(/[.-]/u).map((part) => Number.parseInt(part, 10) || 0);
+  const channelRank = match[4] ? ({ alpha: 0, beta: 1, rc: 2 }[match[4].toLowerCase()] ?? -1) : 3;
+  return [Number(match[1]), Number(match[2]), Number(match[3]), channelRank, Number(match[5] ?? 0)];
 }
 
-function isNewerVersion(candidate, current) {
+function compareVersions(candidate, current) {
   const left = versionParts(candidate);
   const right = versionParts(current);
   for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
-    if ((left[index] ?? 0) !== (right[index] ?? 0)) return (left[index] ?? 0) > (right[index] ?? 0);
+    if ((left[index] ?? 0) !== (right[index] ?? 0)) return (left[index] ?? 0) > (right[index] ?? 0) ? 1 : -1;
   }
-  return false;
+  return 0;
+}
+
+function isNewerVersion(candidate, current) {
+  return compareVersions(candidate, current) > 0;
 }
 
 function requestText(url, timeoutMs = 2500) {
@@ -53,14 +62,23 @@ function requestText(url, timeoutMs = 2500) {
   });
 }
 
-async function readLatestRelease(manifest) {
+async function readLatestRelease(manifest, { request = requestText } = {}) {
   if (process.env.OZ_INBLOG_DISABLE_UPDATE_CHECK === "1") return null;
   try {
-    const release = JSON.parse(await requestText(`https://api.github.com/repos/${repository}/releases/latest`));
-    const tag = typeof release.tag_name === "string" ? release.tag_name : "";
-    const remoteManifest = JSON.parse(await requestText(`https://raw.githubusercontent.com/${repository}/${encodeURIComponent(tag)}/release-manifest.json`));
-    if (!isNewerVersion(remoteManifest.packageVersion, manifest.packageVersion)) return null;
-    return { tag, manifest: remoteManifest, url: release.html_url || `https://github.com/${repository}/releases/latest` };
+    const releases = JSON.parse(await request(`https://api.github.com/repos/${repository}/releases?per_page=30`));
+    if (!Array.isArray(releases)) return null;
+    const candidates = releases
+      .filter((release) => release?.draft !== true && typeof release?.tag_name === "string")
+      .sort((left, right) => compareVersions(right.tag_name, left.tag_name));
+    for (const release of candidates) {
+      const tag = release.tag_name;
+      if (!isNewerVersion(tag, manifest.packageVersion)) continue;
+      const remoteManifest = JSON.parse(await request(`https://raw.githubusercontent.com/${repository}/${encodeURIComponent(tag)}/release-manifest.json`));
+      if (remoteManifest.gitTag && remoteManifest.gitTag !== tag) continue;
+      if (!isNewerVersion(remoteManifest.packageVersion, manifest.packageVersion)) continue;
+      return { tag, manifest: remoteManifest, url: release.html_url || `https://github.com/${repository}/releases/latest` };
+    }
+    return null;
   } catch {
     return null;
   }
@@ -117,6 +135,56 @@ function findNode() {
   return candidates.find((candidate) => fs.existsSync(candidate)) || "node";
 }
 
+function bundleVersion(appPath) {
+  try {
+    const info = fs.readFileSync(path.join(appPath, "Contents", "Info.plist"), "utf8");
+    return info.match(/<key>CFBundleVersion<\/key>\s*<string>([^<]+)<\/string>/u)?.[1] ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function archiveDuplicateApp(appPath, backupDirectory) {
+  try {
+    fs.mkdirSync(backupDirectory, { recursive: true, mode: 0o700 });
+    const stamp = new Date().toISOString().replace(/\D/gu, "");
+    let destination = path.join(backupDirectory, `oz-inblog-duplicate-${stamp}`);
+    let suffix = 1;
+    while (fs.existsSync(destination)) destination = path.join(backupDirectory, `oz-inblog-duplicate-${stamp}-${suffix++}`);
+    fs.renameSync(appPath, destination);
+    return destination;
+  } catch (error) {
+    process.stderr.write(`oz-inblog could not archive duplicate app ${appPath}: ${error instanceof Error ? error.message : String(error)}\n`);
+    return null;
+  }
+}
+
+function syncInstalledApp({ manifest, rootDirectory = root, userHome = os.homedir(), launchedAppPath = process.env.OZ_INBLOG_APP_PATH, systemAppPath = "/Applications/oz-inblog.app", userAppPath = path.join(userHome, "Applications", "oz-inblog.app") } = {}) {
+  const sourceAppPath = path.join(rootDirectory, "oz-inblog.app");
+  if (!fs.existsSync(sourceAppPath)) return { available: false, canonicalPath: null, synced: false, archived: [] };
+  const managedPaths = [systemAppPath, userAppPath];
+  const preferredPath = managedPaths.includes(launchedAppPath) && fs.existsSync(launchedAppPath)
+    ? launchedAppPath
+    : managedPaths.find((candidate) => fs.existsSync(candidate)) ?? userAppPath;
+  let synced = false;
+  try {
+    fs.mkdirSync(path.dirname(preferredPath), { recursive: true, mode: 0o755 });
+    if (!fs.existsSync(preferredPath) || bundleVersion(preferredPath) !== (manifest?.packageVersion ?? "")) {
+      fs.cpSync(sourceAppPath, preferredPath, { recursive: true, force: true });
+      synced = true;
+    }
+  } catch (error) {
+    process.stderr.write(`oz-inblog could not sync the canonical app: ${error instanceof Error ? error.message : String(error)}\n`);
+    return { available: true, canonicalPath: preferredPath, synced: false, archived: [] };
+  }
+  const backupDirectory = path.join(userHome, "backups", "apps");
+  const archived = managedPaths
+    .filter((candidate) => candidate !== preferredPath && fs.existsSync(candidate))
+    .map((candidate) => archiveDuplicateApp(candidate, backupDirectory))
+    .filter(Boolean);
+  return { available: true, canonicalPath: preferredPath, synced, archived };
+}
+
 async function startServer() {
   if (await checkHealth()) return false;
   const configDir = path.join(home, "config");
@@ -139,6 +207,7 @@ async function startServer() {
 
 async function openApp() {
   const manifest = currentManifest();
+  syncInstalledApp({ manifest });
   await startServer();
   const latest = await readLatestRelease(manifest);
   if (latest) await askUpdate(latest, manifest);
@@ -152,4 +221,4 @@ if (process.argv.includes("--open")) {
   });
 }
 
-export { isNewerVersion, versionParts };
+export { isNewerVersion, readLatestRelease, syncInstalledApp, versionParts };

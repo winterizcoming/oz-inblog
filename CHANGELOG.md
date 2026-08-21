@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0-alpha.7 - 2026-08-21
+
+- Detects newer alpha, beta, and stable releases instead of relying only on GitHub's stable-release endpoint.
+- Keeps one canonical `oz-inblog.app` copy, syncs it to the active release, and moves duplicate app copies to the local backup directory.
+
 ## 1.0.0-alpha.6 - 2026-08-21
 
 - Added the in-app Guide link, which opens the bundled oz-inblog guide PDF in a new tab.

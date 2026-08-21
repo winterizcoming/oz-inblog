@@ -3,6 +3,8 @@ set -u
 
 support_root="${OZ_INBLOG_HOME:-$HOME/Library/Application Support/oz-inblog}"
 current_root="$support_root/current"
+app_bundle="$(cd "$(dirname "$0")/../.." && pwd -P)"
+export OZ_INBLOG_APP_PATH="$app_bundle"
 
 find_node() {
   if [[ -n "${OZ_NODE_BIN:-}" && -x "$OZ_NODE_BIN" ]]; then

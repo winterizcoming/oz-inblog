@@ -7,7 +7,7 @@
 아래 문장을 Codex에 그대로 전달하세요.
 
 ```text
-GitHub의 https://github.com/winterizcoming/oz-inblog/tree/v1.0.0-alpha.6 에 있는 INSTALL.md와 release-manifest.json을 읽고 oz-inblog v1.0a를 설치해줘. 허용된 도구 버전 범위 안이면 기존 도구를 그대로 사용하고, Codex CLI가 없거나 최소 버전보다 낮으면 @openai/codex 최신 안정 버전으로 자동 업데이트한 뒤 계속 진행해줘. release checksum을 검증하고 기존 데이터는 보존하며, 로그인·전역 설치 권한 오류·기존 설치 덮어쓰기가 필요할 때만 나에게 확인한 뒤 doctor, test, smoke를 통과시키고 로컬 서비스를 시작해 oz-inblog.app을 응용 프로그램 폴더에 설치한 뒤 접속 주소와 데이터 위치를 알려줘.
+GitHub의 https://github.com/winterizcoming/oz-inblog/tree/v1.0.0-alpha.7 에 있는 INSTALL.md와 release-manifest.json을 읽고 oz-inblog v1.0a를 설치해줘. 허용된 도구 버전 범위 안이면 기존 도구를 그대로 사용하고, Codex CLI가 없거나 최소 버전보다 낮으면 @openai/codex 최신 안정 버전으로 자동 업데이트한 뒤 계속 진행해줘. release checksum을 검증하고 기존 데이터는 보존하며, 로그인·전역 설치 권한 오류·기존 설치 덮어쓰기가 필요할 때만 나에게 확인한 뒤 doctor, test, smoke를 통과시키고 로컬 서비스를 시작해 oz-inblog.app을 응용 프로그램 폴더에 설치한 뒤 접속 주소와 데이터 위치를 알려줘.
 ```
 
 지원 환경과 설치 절차는 [INSTALL.md](INSTALL.md)를 확인하세요.
@@ -27,7 +27,7 @@ npm start
 
 ## 앱으로 실행
 
-릴리스에 포함된 `oz-inblog.app`을 `응용 프로그램` 폴더로 옮긴 뒤 더블클릭하면 서버를 켜고 브라우저를 엽니다. 설치가 끝나면 `~/Applications/oz-inblog.app` 또는 `/Applications/oz-inblog.app` 중 한 곳에 있는 앱만 사용하세요. 앱은 현재 설치된 `current` 릴리스를 사용하며, 새 릴리스가 있으면 업데이트 안내를 클립보드에 복사할지 묻습니다. 기존 데이터는 그대로 유지됩니다.
+릴리스에 포함된 `oz-inblog.app`을 `응용 프로그램` 폴더로 옮긴 뒤 더블클릭하면 서버를 켜고 브라우저를 엽니다. 앱은 현재 설치된 `current` 릴리스를 사용하며, 실행할 때 최신 alpha·beta·stable 릴리스를 확인합니다. 업데이트가 있으면 안내를 클립보드에 복사할지 묻습니다. 지원되는 응용 프로그램 위치가 여러 개라면 실행 중인 릴리스에 맞는 하나만 남기고 나머지는 `~/Library/Application Support/oz-inblog/backups/apps`로 옮깁니다. 기존 데이터는 그대로 유지됩니다.
 
 ## 지원 범위
 
