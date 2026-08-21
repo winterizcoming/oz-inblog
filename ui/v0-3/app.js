@@ -263,8 +263,6 @@ async function loadBrunchWritingSkills() {
       state.brunchChat.writingSkills = Array.isArray(payload.skills)
         ? payload.skills.filter((skill) => skill && typeof skill.id === "string" && typeof skill.label === "string")
         : [];
-      const modal = document.querySelector("#writingEditorModal");
-      if (modal && !modal.hidden) renderWritingSkillButtons(modal);
       return state.brunchChat.writingSkills;
     } catch {
       state.brunchChat.writingSkills = [];
@@ -3763,6 +3761,7 @@ async function sendWritingEditRequestToAi() {
     let { skill, instruction } = resolveWritingSkillRequest(request, skills);
     if (!skill) {
       skills = await loadBrunchWritingSkills();
+      renderWritingSkillButtons(modal);
       ({ skill, instruction } = resolveWritingSkillRequest(request, skills));
     }
     skill ??= skills.find((entry) => entry.id === "korean-humanizer") ?? skills[0];

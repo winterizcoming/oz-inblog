@@ -1,0 +1,32 @@
+#!/bin/zsh
+set -u
+
+support_root="${OZ_INBLOG_HOME:-$HOME/Library/Application Support/oz-inblog}"
+current_root="$support_root/current"
+
+find_node() {
+  if [[ -n "${OZ_NODE_BIN:-}" && -x "$OZ_NODE_BIN" ]]; then
+    print -r -- "$OZ_NODE_BIN"
+    return 0
+  fi
+  for candidate in /opt/homebrew/bin/node /usr/local/bin/node /usr/bin/node; do
+    if [[ -x "$candidate" ]]; then
+      print -r -- "$candidate"
+      return 0
+    fi
+  done
+  command -v node 2>/dev/null || true
+}
+
+node_bin="$(find_node)"
+if [[ -z "$node_bin" || ! -x "$node_bin" ]]; then
+  /usr/bin/osascript -e 'display dialog "Node.js를 찾을 수 없습니다. 설치 안내를 확인해 주세요." with title "oz:inblog editor" buttons {"확인"} default button "확인"' >/dev/null 2>&1 || true
+  exit 1
+fi
+
+if [[ ! -e "$current_root" ]]; then
+  /usr/bin/osascript -e 'display dialog "oz-inblog가 아직 설치되지 않았습니다. INSTALL.md에 안내된 설치를 먼저 진행해 주세요." with title "oz:inblog editor" buttons {"확인"} default button "확인"' >/dev/null 2>&1 || true
+  exit 1
+fi
+
+exec "$node_bin" "$current_root/scripts/oz-inblog-launcher.mjs" --open

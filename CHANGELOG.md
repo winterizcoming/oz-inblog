@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-alpha.5 - 2026-08-21
+
+- Added the macOS `oz-inblog.app` launcher with the supplied icon.
+- Added browser title and app naming as `oz:inblog editor`.
+- Documented app installation, launch, and update guidance.
+
 ## 1.0.0-alpha.4 - 2026-08-21
 
 - Automatically updates a missing or outdated Codex CLI to the latest stable package during installation.

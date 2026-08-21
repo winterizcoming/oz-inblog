@@ -3,7 +3,7 @@ export const copyCatalog = Object.freeze({
     productName: "오즈코딩스쿨 인블로그 자동화",
     version: "v1.0a",
     chatVersion: "v1.0a",
-    pageTitle: "OZ 디부캠 인블로그 UI"
+    pageTitle: "oz:inblog editor"
   },
   navigation: {
     saved: "저장됨",
